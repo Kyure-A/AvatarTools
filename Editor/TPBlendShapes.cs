@@ -51,7 +51,6 @@ namespace moe.kyre.tool4tp
                 // VRChat SDK (com.vrchat.base/Editor/VRCSDK/Dependencies/VRChat/Components/VRCAvatarDescriptorEditor.cs) を参照
                 if (blendShape.name.ToLowerInvariant() == "vrc.v_" + Visemes[i]) return true;
                 if (blendShape.name.ToLowerInvariant() == "v_" + Visemes[i]) return true;
-                if (blendShape.name.ToLowerInvariant().EndsWith(Visemes[i])) return true;
                 if (blendShape.name.ToLowerInvariant() == Visemes[i]) return true;
             }
             
