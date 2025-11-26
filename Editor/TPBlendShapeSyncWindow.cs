@@ -25,8 +25,8 @@ namespace moe.kyre.tool4tp
     
         private void OnGUI()
         {
-            var editorLocal = (SkinnedMeshRenderer)EditorGUILayout.ObjectField("舌ピアスなど", (SkinnedMeshRenderer)local, typeof(SkinnedMeshRenderer), true);
             var editorReference = (SkinnedMeshRenderer)EditorGUILayout.ObjectField("元メッシュ", (SkinnedMeshRenderer)reference, typeof(SkinnedMeshRenderer), true);
+            var editorLocal = (SkinnedMeshRenderer)EditorGUILayout.ObjectField("舌ピアスなど", (SkinnedMeshRenderer)local, typeof(SkinnedMeshRenderer), true);
 
             if (local == null && editorLocal != null)
             {
