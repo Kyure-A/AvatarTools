@@ -45,7 +45,9 @@ namespace moe.kyre.tool4tp
                     blendShapes = TPBlendShapes.GetBlendShapes(local);
                 }
                 
-                scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+                float rowHeight = EditorGUIUtility.singleLineHeight + 4f;
+                float listHeight = Mathf.Min(200f, Mathf.Max(rowHeight, blendShapes.Count * rowHeight));
+                scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(listHeight));
 
                 var toRemove = new List<string>();
                 

@@ -13,6 +13,7 @@ namespace moe.kyre.tool4tp
     {
         private VRCAvatarDescriptor avatar = null;
         private SkinnedMeshRenderer local = null;
+        private Vector2 scrollPos = Vector2.zero;
         public static List<BlendShape> blendShapes = new List<BlendShape>();
         
         [MenuItem("Tools/tool4tp/LipSync")]
@@ -35,16 +36,20 @@ namespace moe.kyre.tool4tp
 
                 var visemes = blendShapes.Where(s => TPBlendShapes.isViseme(s)).ToList();
                 
+                float rowHeight = EditorGUIUtility.singleLineHeight + 4f;
+                float listHeight = Mathf.Min(200f, Mathf.Max(rowHeight, visemes.Count * rowHeight));
+                scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(listHeight));
                 foreach (var bs in visemes)
                 {
                     EditorGUILayout.BeginHorizontal();
                     
-                    bool state = EditorGUILayout.Toggle(true, GUILayout.Width(20));
+                    EditorGUILayout.Toggle(true, GUILayout.Width(20));
                     
                     EditorGUILayout.LabelField(bs.name);
                     
                     EditorGUILayout.EndHorizontal();
                 }
+                EditorGUILayout.EndScrollView();
 
                 if (GUILayout.Button("LipSync を生成する"))
                 {
