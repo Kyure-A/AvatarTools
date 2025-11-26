@@ -6,9 +6,9 @@ using UnityEditor;
 using nadena.dev.modular_avatar.core;
 using VRC.SDK3.Avatars.Components;
 
-namespace moe.kyre.tool4tp
+namespace moe.kyre.avatartools
 {
-    public class TPBlendShapeSyncWindow : EditorWindow
+    public class BlendShapeSyncWindow : EditorWindow
     {
         private SkinnedMeshRenderer local = null;
         private SkinnedMeshRenderer reference = null;
@@ -20,7 +20,7 @@ namespace moe.kyre.tool4tp
         [MenuItem("Tools/tool4tp/BlendShapeSync")]
         public static void ShowWindow()
         {
-            GetWindow<TPBlendShapeSyncWindow>("tool4tp/BlendShapeSync");
+            GetWindow<BlendShapeSyncWindow>("tool4tp/BlendShapeSync");
         }
     
         private void OnGUI()
@@ -31,7 +31,7 @@ namespace moe.kyre.tool4tp
             if (local == null && editorLocal != null)
             {
                 local = editorLocal;
-                blendShapes = TPBlendShapes.GetBlendShapes(local);
+                blendShapes = BlendShapes.GetBlendShapes(local);
                 blendShapeSelections.Clear();
             }
 
@@ -45,7 +45,7 @@ namespace moe.kyre.tool4tp
                 if (local != editorLocal)
                 {
                     local = editorLocal;
-                    blendShapes = TPBlendShapes.GetBlendShapes(local);
+                    blendShapes = BlendShapes.GetBlendShapes(local);
                     blendShapeSelections.Clear();
                 }
                 
@@ -83,7 +83,7 @@ namespace moe.kyre.tool4tp
                             EditorUtility.DisplayDialog("BlendShapeSync", "1 つ以上のブレンドシェイプを選択してください。", "OK");
                             return;
                         }
-                        TPAttacher.BlendShapeSync(editorLocal, reference, selected);
+                        Attacher.BlendShapeSync(editorLocal, reference, selected);
                     }
                 }
             }

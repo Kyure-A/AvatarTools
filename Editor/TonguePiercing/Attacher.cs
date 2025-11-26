@@ -6,9 +6,9 @@ using UnityEngine;
 using nadena.dev.modular_avatar.core;
 using VRC.SDK3.Avatars.Components;
 
-namespace moe.kyre.tool4tp
+namespace moe.kyre.avatartools
 {
-    public static class TPAttacher
+    public static class Attacher
     {
         public static void BoneProxy (GameObject obj)
         {
@@ -20,7 +20,7 @@ namespace moe.kyre.tool4tp
             GameObject avatar = nadena.dev.ndmf.runtime.RuntimeUtil.FindAvatarInParents(reference.gameObject.transform).gameObject;
             string relativePath = nadena.dev.ndmf.runtime.RuntimeUtil.RelativePath(avatar, reference.gameObject);
             
-            var source = selectedBlendShapes ?? TPBlendShapeSyncWindow.blendShapes;
+            var source = selectedBlendShapes ?? BlendShapeSyncWindow.blendShapes;
             
             List<BlendshapeBinding> bindings = source
                 .Select(blendshape => new BlendshapeBinding

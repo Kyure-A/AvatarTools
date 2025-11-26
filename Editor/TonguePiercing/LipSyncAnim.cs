@@ -6,9 +6,9 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
 
-namespace moe.kyre.tool4tp
+namespace moe.kyre.avatartools
 {
-    public static class TPLipSyncAnim
+    public static class LipSyncAnim
     {
         private static void CreateClip(string rendererPath, string dirPath, List<BlendShape> visemes)
         {
@@ -49,7 +49,7 @@ namespace moe.kyre.tool4tp
             
             AnimatorStateMachine stateMachine = ac.layers[0].stateMachine;
 
-            var canonicalVisemes = TPBlendShapes.Visemes;
+            var canonicalVisemes = BlendShapes.Visemes;
             AnimatorState defaultState = null;
 
             for (int i = 0; i < canonicalVisemes.Length; i++)
