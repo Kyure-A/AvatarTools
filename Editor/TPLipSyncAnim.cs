@@ -12,6 +12,7 @@ namespace moe.kyre.tool4tp
     {
         private static void CreateClip(string rendererPath, string dirPath, List<BlendShape> visemes)
         {
+            var targetPath = string.IsNullOrEmpty(rendererPath) ? "" : rendererPath;
             for (int i = 0; i < visemes.Count; i++)
             {
                 AnimationClip clip = new AnimationClip();
@@ -23,7 +24,7 @@ namespace moe.kyre.tool4tp
                     if (i == j) curve.AddKey(0f, 100f);
                     else curve.AddKey(0f, 0f);
 
-                    clip.SetCurve(rendererPath, typeof(SkinnedMeshRenderer), $"blendShape.{visemes[j].name}", curve);
+                    clip.SetCurve(targetPath, typeof(SkinnedMeshRenderer), $"blendShape.{visemes[j].name}", curve);
                 }
 
                 AnimationClipSettings settings = AnimationUtility.GetAnimationClipSettings(clip);

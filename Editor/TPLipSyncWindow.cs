@@ -21,14 +21,6 @@ namespace moe.kyre.tool4tp
             GetWindow<TPLipSyncWindow>("tool4tp/LipSync");
         }
 
-        private string GetRelativePath(Transform target, Transform root)
-        {
-            if (target == root)
-                return "";
-            var parentPath = GetRelativePath(target.parent, root);
-            return string.IsNullOrEmpty(parentPath) ? target.name : $"{parentPath}/{target.name}";
-        }
-        
         private void OnGUI()
         {
             var avatarLocal = (VRCAvatarDescriptor)EditorGUILayout.ObjectField("Avatar", (VRCAvatarDescriptor)avatar, typeof(VRCAvatarDescriptor), true);
@@ -61,8 +53,7 @@ namespace moe.kyre.tool4tp
                     
                     if (!string.IsNullOrEmpty(path))
                     {
-                        string rendererPath = GetRelativePath(editorLocal.transform, avatarLocal.transform);
-                        string controllerPath = TPLipSyncAnim.Create(rendererPath, path, visemes);
+                        string controllerPath = TPLipSyncAnim.Create(string.Empty, path, visemes);
                         var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controllerPath);
                         if (!controller) return;
 
@@ -74,7 +65,8 @@ namespace moe.kyre.tool4tp
 
                         mergeAnimator.animator = controller;
                         mergeAnimator.layerType = VRCAvatarDescriptor.AnimLayerType.FX;
-                        mergeAnimator.pathMode = MergeAnimatorPathMode.Absolute;
+                        mergeAnimator.pathMode = MergeAnimatorPathMode.Relative;
+                        mergeAnimator.relativePathRoot = new AvatarObjectReference();
                         mergeAnimator.mergeAnimatorMode = MergeAnimatorMode.Append;
                         mergeAnimator.deleteAttachedAnimator = true;
                         EditorUtility.SetDirty(mergeAnimator);
