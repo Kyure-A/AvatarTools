@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using nadena.dev.modular_avatar.core;
@@ -12,6 +13,7 @@ namespace moe.kyre.tool4tp
         private SkinnedMeshRenderer local = null;
         private SkinnedMeshRenderer reference = null;
         private Vector2 scrollPos = Vector2.zero;
+        private Dictionary<string, bool> blendShapeSelections = new Dictionary<string, bool>();
         
         public static List<BlendShape> blendShapes = new List<BlendShape>();        
         
@@ -30,6 +32,7 @@ namespace moe.kyre.tool4tp
             {
                 local = editorLocal;
                 blendShapes = TPBlendShapes.GetBlendShapes(local);
+                blendShapeSelections.Clear();
             }
 
             if (reference == null && editorReference != null)
@@ -43,26 +46,25 @@ namespace moe.kyre.tool4tp
                 {
                     local = editorLocal;
                     blendShapes = TPBlendShapes.GetBlendShapes(local);
+                    blendShapeSelections.Clear();
                 }
                 
                 float rowHeight = EditorGUIUtility.singleLineHeight + 4f;
                 float listHeight = Mathf.Min(200f, Mathf.Max(rowHeight, blendShapes.Count * rowHeight));
                 scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(listHeight));
 
-                var toRemove = new List<string>();
-                
                 foreach (var bs in blendShapes)
                 {
                     EditorGUILayout.BeginHorizontal();
             
-                    bool state = EditorGUILayout.Toggle(true, GUILayout.Width(20));
-            
-                    if (!state)
+                    if (!blendShapeSelections.ContainsKey(bs.name))
                     {
-                        toRemove.Add(bs.name);
-                        EditorGUILayout.EndHorizontal();
-                        continue;
+                        blendShapeSelections[bs.name] = true;
                     }
+
+                    blendShapeSelections[bs.name] = EditorGUILayout.Toggle(
+                        blendShapeSelections.TryGetValue(bs.name, out var current) ? current : true,
+                        GUILayout.Width(20));
 
                     EditorGUILayout.LabelField(bs.name);
             
@@ -71,13 +73,17 @@ namespace moe.kyre.tool4tp
                 
                 EditorGUILayout.EndScrollView();
 
-                foreach (var bs in toRemove) TPBlendShapes.RemoveBlendShapeByName(blendShapes, bs);
-                
                 if (reference != null)
                 {
                     if (GUILayout.Button("設定する"))
                     {
-                        TPAttacher.BlendShapeSync(editorLocal, reference);
+                        var selected = blendShapes.Where(bs => blendShapeSelections.TryGetValue(bs.name, out var state) && state).ToList();
+                        if (selected.Count == 0)
+                        {
+                            EditorUtility.DisplayDialog("BlendShapeSync", "1 つ以上のブレンドシェイプを選択してください。", "OK");
+                            return;
+                        }
+                        TPAttacher.BlendShapeSync(editorLocal, reference, selected);
                     }
                 }
             }

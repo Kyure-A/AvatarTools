@@ -15,12 +15,14 @@ namespace moe.kyre.tool4tp
             return;
         }
 
-        public static void BlendShapeSync (SkinnedMeshRenderer local, SkinnedMeshRenderer reference)
+        public static void BlendShapeSync (SkinnedMeshRenderer local, SkinnedMeshRenderer reference, List<BlendShape> selectedBlendShapes = null)
         {
             GameObject avatar = nadena.dev.ndmf.runtime.RuntimeUtil.FindAvatarInParents(reference.gameObject.transform).gameObject;
             string relativePath = nadena.dev.ndmf.runtime.RuntimeUtil.RelativePath(avatar, reference.gameObject);
             
-            List<BlendshapeBinding> bindings = TPBlendShapeSyncWindow.blendShapes
+            var source = selectedBlendShapes ?? TPBlendShapeSyncWindow.blendShapes;
+            
+            List<BlendshapeBinding> bindings = source
                 .Select(blendshape => new BlendshapeBinding
                 {
                     ReferenceMesh = new AvatarObjectReference
