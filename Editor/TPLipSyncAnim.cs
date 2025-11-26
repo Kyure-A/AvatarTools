@@ -48,23 +48,39 @@ namespace moe.kyre.tool4tp
             
             AnimatorStateMachine stateMachine = ac.layers[0].stateMachine;
 
-            foreach (var viseme in visemes)
+            var canonicalVisemes = TPBlendShapes.Visemes;
+            AnimatorState defaultState = null;
+
+            for (int i = 0; i < canonicalVisemes.Length; i++)
             {
-                AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(Path.Combine(dirPath, $"{viseme.name}.anim").Replace("\\", "/"));
-                AnimatorState state = stateMachine.AddState(TPBlendShapes.Visemes.FirstOrDefault(v => viseme.name.Contains(v)));
+                var canonical = canonicalVisemes[i];
+                var match = visemes.FirstOrDefault(v =>
+                    !string.IsNullOrEmpty(v.name) &&
+                    v.name.IndexOf(canonical, StringComparison.OrdinalIgnoreCase) >= 0);
                 
+                if (string.IsNullOrEmpty(match.name)) continue;
+
+                string clipPath = Path.Combine(dirPath, $"{match.name}.anim").Replace("\\", "/");
+                AnimationClip clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
+                if (!clip) continue;
+
+                AnimatorState state = stateMachine.AddState(canonical.ToUpperInvariant());
                 state.motion = clip;
-                
-                // Setting Motion Time to "Voice"
+
                 state.timeParameter = "Voice";
                 state.timeParameterActive = true;
                 state.writeDefaultValues = false;
-                
-                // 黄色いやつを設定
-                if (viseme.name.Contains("sil")) stateMachine.defaultState = state;
 
-                stateMachine.AddEntryTransition(state);
-                state.AddExitTransition();
+                var transition = stateMachine.AddAnyStateTransition(state);
+                transition.hasExitTime = false;
+                transition.duration = 0f;
+                transition.AddCondition(AnimatorConditionMode.Equals, i, "Viseme");
+
+                if (canonical == "sil" || defaultState == null)
+                {
+                    defaultState = state;
+                    stateMachine.defaultState = defaultState;
+                }
             }
 
             AssetDatabase.SaveAssets();

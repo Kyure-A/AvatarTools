@@ -1,0 +1,17 @@
+{
+  "name": "moe.kyre.tool4tp",
+  "version": "0.1.0",
+  "displayName": "tool4tp",
+  "description": "Utility collection for tongue piercing setup and other avatar tweaks.",
+  "unity": "2022.3",
+  "license": "MIT",
+  "author": {
+    "name": "Kyure_A",
+    "url": "https://github.com/Kyure-A/tool4tp"
+  },
+  "dependencies": {},
+  "vpmDependencies": {
+    "com.vrchat.avatars": ">=3.5.0",
+    "nadena.dev.modular-avatar": ">=1.10.0"
+  }
+}

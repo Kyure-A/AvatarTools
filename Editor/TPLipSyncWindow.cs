@@ -25,7 +25,8 @@ namespace moe.kyre.tool4tp
         {
             if (target == root)
                 return "";
-            return GetRelativePath(target.parent, root) + "/" + target.name;
+            var parentPath = GetRelativePath(target.parent, root);
+            return string.IsNullOrEmpty(parentPath) ? target.name : $"{parentPath}/{target.name}";
         }
         
         private void OnGUI()
@@ -60,9 +61,23 @@ namespace moe.kyre.tool4tp
                     
                     if (!string.IsNullOrEmpty(path))
                     {
-                        string controllerPath = TPLipSyncAnim.Create(GetRelativePath(editorLocal.transform, avatarLocal.transform), path, visemes);
-                        var animator = local.gameObject.AddComponent<Animator>();
-                        animator.runtimeAnimatorController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controllerPath);
+                        string rendererPath = GetRelativePath(editorLocal.transform, avatarLocal.transform);
+                        string controllerPath = TPLipSyncAnim.Create(rendererPath, path, visemes);
+                        var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controllerPath);
+                        if (!controller) return;
+
+                        var mergeAnimator = local.GetComponent<ModularAvatarMergeAnimator>();
+                        if (!mergeAnimator)
+                        {
+                            mergeAnimator = local.gameObject.AddComponent<ModularAvatarMergeAnimator>();
+                        }
+
+                        mergeAnimator.animator = controller;
+                        mergeAnimator.layerType = VRCAvatarDescriptor.AnimLayerType.FX;
+                        mergeAnimator.pathMode = MergeAnimatorPathMode.Absolute;
+                        mergeAnimator.mergeAnimatorMode = MergeAnimatorMode.Append;
+                        mergeAnimator.deleteAttachedAnimator = true;
+                        EditorUtility.SetDirty(mergeAnimator);
                     }
                 }
             }
