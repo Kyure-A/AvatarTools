@@ -74,7 +74,9 @@ namespace moe.kyre.avatartools
 
                 var transition = stateMachine.AddAnyStateTransition(state);
                 transition.hasExitTime = false;
-                transition.duration = 0f;
+                transition.hasFixedDuration = true;
+                transition.duration = 0.05f;
+                transition.canTransitionToSelf = false;
                 transition.AddCondition(AnimatorConditionMode.Equals, i, "Viseme");
 
                 if (canonical == "sil" || defaultState == null)
