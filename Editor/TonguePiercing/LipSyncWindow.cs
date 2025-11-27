@@ -7,9 +7,9 @@ using UnityEditor.Animations;
 using nadena.dev.modular_avatar.core;
 using VRC.SDK3.Avatars.Components;
 
-namespace moe.kyre.tool4tp
+namespace moe.kyre.avatartools
 {
-    public class TPLipSyncWindow : EditorWindow
+    public class LipSyncWindow : EditorWindow
     {
         private VRCAvatarDescriptor avatar = null;
         private SkinnedMeshRenderer local = null;
@@ -17,10 +17,10 @@ namespace moe.kyre.tool4tp
         private Dictionary<string, bool> visemeSelections = new Dictionary<string, bool>();
         public static List<BlendShape> blendShapes = new List<BlendShape>();
         
-        [MenuItem("Tools/tool4tp/LipSync")]
+        [MenuItem("Tools/kyre's avatar tools/LipSync")]
         public static void ShowWindow()
         {
-            GetWindow<TPLipSyncWindow>("tool4tp/LipSync");
+            GetWindow<LipSyncWindow>("kyre's avatar tools/LipSync");
         }
 
         private void OnGUI()
@@ -39,9 +39,9 @@ namespace moe.kyre.tool4tp
                     visemeSelections.Clear();
                 }
                 
-                blendShapes = TPBlendShapes.GetBlendShapes(local);
+                blendShapes = BlendShapes.GetBlendShapes(local);
 
-                var visemes = blendShapes.Where(s => TPBlendShapes.isViseme(s)).ToList();
+                var visemes = blendShapes.Where(s => BlendShapes.isViseme(s)).ToList();
 
                 foreach (var bs in visemes)
                 {
@@ -82,7 +82,7 @@ namespace moe.kyre.tool4tp
                     
                     if (!string.IsNullOrEmpty(path))
                     {
-                        string controllerPath = TPLipSyncAnim.Create(string.Empty, path, selectedVisemes);
+                        string controllerPath = LipSyncAnim.Create(string.Empty, path, selectedVisemes);
                         var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controllerPath);
                         if (!controller) return;
 

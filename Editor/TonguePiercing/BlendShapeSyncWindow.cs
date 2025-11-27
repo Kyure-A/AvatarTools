@@ -6,9 +6,9 @@ using UnityEditor;
 using nadena.dev.modular_avatar.core;
 using VRC.SDK3.Avatars.Components;
 
-namespace moe.kyre.tool4tp
+namespace moe.kyre.avatartools
 {
-    public class TPBlendShapeSyncWindow : EditorWindow
+    public class BlendShapeSyncWindow : EditorWindow
     {
         private SkinnedMeshRenderer local = null;
         private SkinnedMeshRenderer reference = null;
@@ -17,10 +17,10 @@ namespace moe.kyre.tool4tp
         
         public static List<BlendShape> blendShapes = new List<BlendShape>();        
         
-        [MenuItem("Tools/tool4tp/BlendShapeSync")]
+        [MenuItem("Tools/kyre's avatar tools/BlendShape Sync")]
         public static void ShowWindow()
         {
-            GetWindow<TPBlendShapeSyncWindow>("tool4tp/BlendShapeSync");
+            GetWindow<BlendShapeSyncWindow>("kyre's avatar tools/BlendShape Sync");
         }
     
         private void OnGUI()
@@ -31,7 +31,7 @@ namespace moe.kyre.tool4tp
             if (local == null && editorLocal != null)
             {
                 local = editorLocal;
-                blendShapes = TPBlendShapes.GetBlendShapes(local);
+                blendShapes = BlendShapes.GetBlendShapes(local);
                 blendShapeSelections.Clear();
             }
 
@@ -45,7 +45,7 @@ namespace moe.kyre.tool4tp
                 if (local != editorLocal)
                 {
                     local = editorLocal;
-                    blendShapes = TPBlendShapes.GetBlendShapes(local);
+                    blendShapes = BlendShapes.GetBlendShapes(local);
                     blendShapeSelections.Clear();
                 }
                 
@@ -83,7 +83,7 @@ namespace moe.kyre.tool4tp
                             EditorUtility.DisplayDialog("BlendShapeSync", "1 つ以上のブレンドシェイプを選択してください。", "OK");
                             return;
                         }
-                        TPAttacher.BlendShapeSync(editorLocal, reference, selected);
+                        Attacher.BlendShapeSync(editorLocal, reference, selected);
                     }
                 }
             }

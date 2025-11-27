@@ -5,7 +5,7 @@ using UnityEditor;
 using nadena.dev.modular_avatar.core;
 using VRC.SDK3.Avatars.Components;
 
-namespace moe.kyre.tool4tp
+namespace moe.kyre.avatartools
 { 
     public struct BlendShape
     {
@@ -13,7 +13,7 @@ namespace moe.kyre.tool4tp
         public int index;
     }
     
-    public static class TPBlendShapes
+    public static class BlendShapes
     {
         public static string[] Visemes = { "sil", "pp", "ff", "th", "dd", "kk", "ch", "ss", "nn", "rr", "aa", "e", "ih", "oh", "ou" };
         

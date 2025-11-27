@@ -5,9 +5,9 @@ using UnityEditor;
 using nadena.dev.modular_avatar.core;
 using VRC.SDK3.Avatars.Components;
 
-namespace moe.kyre.tool4tp
+namespace moe.kyre.avatartools
 {
-    public class TPBoneProxyWindow : EditorWindow
+    public class BoneProxyWindow : EditorWindow
     {
         
     }
