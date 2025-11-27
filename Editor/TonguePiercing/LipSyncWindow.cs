@@ -17,10 +17,10 @@ namespace moe.kyre.avatartools
         private Dictionary<string, bool> visemeSelections = new Dictionary<string, bool>();
         public static List<BlendShape> blendShapes = new List<BlendShape>();
         
-        [MenuItem("Tools/tool4tp/LipSync")]
+        [MenuItem("Tools/kyre's avatar tools/LipSync")]
         public static void ShowWindow()
         {
-            GetWindow<LipSyncWindow>("tool4tp/LipSync");
+            GetWindow<LipSyncWindow>("kyre's avatar tools/LipSync");
         }
 
         private void OnGUI()

@@ -17,10 +17,10 @@ namespace moe.kyre.avatartools
         
         public static List<BlendShape> blendShapes = new List<BlendShape>();        
         
-        [MenuItem("Tools/tool4tp/BlendShapeSync")]
+        [MenuItem("Tools/kyre's avatar tools/BlendShape Sync")]
         public static void ShowWindow()
         {
-            GetWindow<BlendShapeSyncWindow>("tool4tp/BlendShapeSync");
+            GetWindow<BlendShapeSyncWindow>("kyre's avatar tools/BlendShape Sync");
         }
     
         private void OnGUI()
