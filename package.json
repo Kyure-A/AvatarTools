@@ -1,13 +1,13 @@
 {
   "name": "moe.kyre.avatartools",
   "version": "0.1.0",
-  "displayName": "kyre's avatar tools",
-  "description": "Utility collection for kyre's avatar setup workflows, including tongue piercing utilities.",
+  "displayName": "Kyure_A's Avatar tools",
+  "description": "Utility collection for kyre's avatar setup workflows",
   "unity": "2022.3",
   "license": "MIT",
   "author": {
     "name": "Kyure_A",
-    "url": "https://github.com/Kyure-A/tool4tp"
+    "url": "https://github.com/Kyure-A/AvatarTools"
   },
   "dependencies": {},
   "vpmDependencies": {
