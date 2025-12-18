@@ -1,0 +1,120 @@
+name: Release VPM Package
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag name (e.g., v0.1.0). If empty, uses ref/release tag."
+        required: false
+      package_root:
+        description: "Path to package root (contains package.json)"
+        required: false
+        default: "."
+      include_paths:
+        description: "Newline-separated file/dir paths to include in the zip"
+        required: false
+      exclude_paths:
+        description: "Newline-separated file/dir paths to exclude (default excludes .git, .github, dist, obj, Library, Temp, Logs, UserSettings)"
+        required: false
+      zip_basename:
+        description: "Zip base name (prefix before version); default is repo name"
+        required: false
+      version:
+        description: "Override version for zip filename (defaults to package.json version)"
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.event.release.tag_name || github.ref_name }}
+      PACKAGE_ROOT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.package_root || '.' }}
+      ZIP_BASENAME: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.zip_basename || github.event.repository.name }}
+      INCLUDE_OVERRIDE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.include_paths || '' }}
+      EXCLUDE_OVERRIDE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.exclude_paths || '' }}
+      VERSION_OVERRIDE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.version || '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+
+      - name: Build VPM package zip
+        id: prep
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXCLUDE_LIST_FILE="$(mktemp)"
+          printf "%s\n" \
+            .git \
+            .github \
+            dist \
+            obj \
+            Library \
+            Temp \
+            Logs \
+            UserSettings \
+            > "${EXCLUDE_LIST_FILE}"
+          if [ -n "${EXCLUDE_OVERRIDE}" ]; then
+            printf "%s\n" "${EXCLUDE_OVERRIDE}" >> "${EXCLUDE_LIST_FILE}"
+          fi
+
+          mkdir -p dist/package
+
+          if [ -n "${INCLUDE_OVERRIDE}" ]; then
+            printf "%s\n" "${INCLUDE_OVERRIDE}" | while IFS= read -r path || [ -n "$path" ]; do
+              [ -z "$path" ] && continue
+              if [ -e "${PACKAGE_ROOT}/${path}" ]; then
+                cp -r "${PACKAGE_ROOT}/${path}" dist/package/
+              else
+                echo "Skipping missing path: ${PACKAGE_ROOT}/${path}"
+              fi
+            done
+          else
+            rsync -a --exclude-from="${EXCLUDE_LIST_FILE}" "${PACKAGE_ROOT}/" dist/package/
+          fi
+
+          PKG_VERSION="${VERSION_OVERRIDE}"
+          if [ -z "${PKG_VERSION}" ] || [ "${PKG_VERSION}" = "null" ]; then
+            if [ -f "${PACKAGE_ROOT}/package.json" ]; then
+              PKG_VERSION=$(jq -r '.version' "${PACKAGE_ROOT}/package.json")
+            else
+              PKG_VERSION=""
+            fi
+          fi
+          if [ -z "${PKG_VERSION}" ] || [ "${PKG_VERSION}" = "null" ]; then
+            PKG_VERSION="${RELEASE_TAG#refs/tags/}"
+          fi
+
+          ZIP_NAME="${ZIP_BASENAME}"
+          if [ -n "${PKG_VERSION}" ]; then
+            ZIP_NAME="${ZIP_NAME}-${PKG_VERSION}"
+          fi
+          ZIP_NAME="${ZIP_NAME}.zip"
+
+          (
+            cd dist/package
+            zip -r "../${ZIP_NAME}" .
+          )
+          echo "zip_path=dist/${ZIP_NAME}" >> "$GITHUB_OUTPUT"
+          echo "zip_name=${ZIP_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vpm-package
+          path: ${{ steps.prep.outputs.zip_path }}
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          files: ${{ steps.prep.outputs.zip_path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
